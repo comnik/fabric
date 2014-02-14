@@ -8,7 +8,7 @@ import hashlib
 import tempfile
 import re
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from fabric.api import *
 from fabric.utils import apply_lcwd

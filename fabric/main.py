@@ -9,8 +9,8 @@ The other callables defined in this module are internal only. Anything useful
 to individuals leveraging Fabric as a library, should be kept elsewhere.
 """
 import getpass
-from operator import isMappingType
 from optparse import OptionParser
+from functools import reduce
 import os
 import sys
 import types
@@ -29,7 +29,7 @@ from fabric.utils import abort, indent, warn, _pty_size
 # One-time calculation of "all internal callables" to avoid doing this on every
 # check of a given fabfile callable (in is_classic_task()).
 _modules = [api, project, files, console, colors]
-_internals = reduce(lambda x, y: x + filter(callable, vars(y).values()),
+_internals = reduce(lambda x, y: x + list(filter(callable, vars(y).values())),
     _modules,
     []
 )
@@ -63,7 +63,7 @@ def load_settings(path):
     """
     if os.path.exists(path):
         comments = lambda s: s and not s.startswith("#")
-        settings = filter(comments, open(path, 'r'))
+        settings = list(filter(comments, open(path, 'r')))
         return dict((k.strip(), v.strip()) for k, _, v in
             [s.partition('=') for s in settings])
     # Handle nonexistent or empty settings file
@@ -358,10 +358,10 @@ def _is_task(name, value):
 
 def _sift_tasks(mapping):
     tasks, collections = [], []
-    for name, value in mapping.iteritems():
+    for name, value in mapping.items():
         if _is_task(name, value):
             tasks.append(name)
-        elif isMappingType(value):
+        elif isinstance(value, collections.Mapping):
             collections.append(name)
     tasks = sorted(tasks)
     collections = sorted(collections)
@@ -389,7 +389,7 @@ def _print_docstring(docstrings, name):
     if not docstrings:
         return False
     docstring = crawl(name, state.commands).__doc__
-    if isinstance(docstring, basestring):
+    if isinstance(docstring, str):
         return docstring
 
 
@@ -405,7 +405,7 @@ def _normal_list(docstrings=True):
         output = None
         docstring = _print_docstring(docstrings, name)
         if docstring:
-            lines = filter(None, docstring.splitlines())
+            lines = list(filter(None, docstring.splitlines()))
             first_line = lines[0].strip()
             # Truncate it if it's longer than N chars
             size = max_width - (max_len + len(sep) + len(trail))
@@ -622,7 +622,7 @@ def main(fabfile_locations=None):
         # Handle --hosts, --roles, --exclude-hosts (comma separated string =>
         # list)
         for key in ['hosts', 'roles', 'exclude_hosts']:
-            if key in state.env and isinstance(state.env[key], basestring):
+            if key in state.env and isinstance(state.env[key], str):
                 state.env[key] = state.env[key].split(',')
 
         # Feed the env.tasks : tasks that are asked to be executed.

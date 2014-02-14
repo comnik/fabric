@@ -45,7 +45,7 @@ def merge(hosts, roles, exclude, roledefs):
         ))
 
     # Coerce strings to one-item lists
-    if isinstance(hosts, basestring):
+    if isinstance(hosts, str):
         hosts = [hosts]
 
     # Look up roles, turn into flat list of hosts
@@ -78,7 +78,7 @@ def parse_kwargs(kwargs):
     hosts = []
     roles = []
     exclude_hosts = []
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
         if key == 'host':
             hosts = [value]
         elif key == 'hosts':

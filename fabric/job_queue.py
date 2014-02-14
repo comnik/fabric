@@ -7,7 +7,6 @@ items, though within Fabric itself only ``Process`` objects are used/supported.
 
 from __future__ import with_statement
 import time
-import Queue
 
 from fabric.state import env
 from fabric.network import ssh

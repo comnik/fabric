@@ -340,7 +340,6 @@ env = _AttributeDict({
     'sudo_prompt': 'sudo password:',
     'sudo_user': None,
     'tasks': [],
-    'prompts': {},
     'use_exceptions_for': {'network': False},
     'use_shell': True,
     'use_ssh_config': False,
@@ -387,7 +386,7 @@ def default_channel():
     """
     try:
         chan = _open_session()
-    except ssh.SSHException, err:
+    except ssh.SSHException as err:
         if str(err) == 'SSH session not active':
             connections[env.host_string].close()
             del connections[env.host_string]
