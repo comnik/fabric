@@ -24,7 +24,7 @@ def _endswith(char_list, substring):
 
 
 def _has_newline(bytelist):
-    return '\r' in bytelist or '\n' in bytelist
+    return ('\r' in bytelist) or ('\n' in bytelist)
 
 
 def output_loop(*args, **kwargs):
@@ -85,6 +85,9 @@ class OutputLooper(object):
                 if self.timeout is not None and elapsed > self.timeout:
                     raise CommandTimeout
                 continue
+
+            bytelist = bytelist.decode('utf-8')
+
             # Empty byte == EOS
             if bytelist == '':
                 # If linewise, ensure we flush any leftovers in the buffer.
@@ -141,7 +144,7 @@ class OutputLooper(object):
                         self._flush(printable_bytes)
 
                 # Now we have handled printing, handle interactivity
-                read_lines = re.split(r"(\r|\n|\r\n)", bytelist)
+                read_lines = re.split("(\r|\n|\r\n)", bytelist)
                 for fragment in read_lines:
                     # Store in capture buffer
                     self.capture += fragment
